@@ -3,9 +3,6 @@ import { LearningModule, ProgressStats } from './learning-module.model';
 import { LearningModuleDataService } from './learning-module-data.service';
 import { ProgressService } from './progress.service';
 
-/**
- * GraphQL Object Type for Progress Statistics
- */
 @ObjectType()
 export class ProgressStatsType {
     @Field()
@@ -19,11 +16,7 @@ export class ProgressStatsType {
 }
 
 /**
- * Resolver Layer (Layer 1)
- * 
- * Handles GraphQL queries and mutations.
- * Delegates all logic to the appropriate services.
- * Contains NO business logic - only GraphQL interface concerns.
+ * GraphQL Resolver - Handles queries and mutations, delegates to services.
  */
 @Resolver(() => LearningModule)
 export class LearningModuleResolver {
@@ -32,29 +25,14 @@ export class LearningModuleResolver {
         private readonly progressService: ProgressService,
     ) { }
 
-    /**
-     * Returns all learning modules, optionally filtered by category
-     * @param category - Optional category filter (AI, Sustainability, DigitalSkills)
-     */
-    @Query(() => [LearningModule], {
-        name: 'modules',
-        description: 'Fetches all learning modules, optionally filtered by category',
-    })
+    @Query(() => [LearningModule], { name: 'modules' })
     getModules(
         @Args('category', { type: () => String, nullable: true }) category?: string,
     ): LearningModule[] {
         return this.dataService.findAll(category) as LearningModule[];
     }
 
-    /**
-     * Toggles or sets the completion status of a module
-     * @param id - The module ID
-     * @param completed - The new completion status
-     */
-    @Mutation(() => LearningModule, {
-        name: 'toggleModuleCompletion',
-        description: 'Updates the completion status of a learning module',
-    })
+    @Mutation(() => LearningModule, { name: 'toggleModuleCompletion' })
     toggleModuleCompletion(
         @Args('id', { type: () => String }) id: string,
         @Args('completed', { type: () => Boolean }) completed: boolean,
@@ -62,13 +40,7 @@ export class LearningModuleResolver {
         return this.dataService.updateCompletion(id, completed) as LearningModule;
     }
 
-    /**
-     * Returns progress statistics for all modules
-     */
-    @Query(() => ProgressStatsType, {
-        name: 'progress',
-        description: 'Fetches progress statistics for all modules',
-    })
+    @Query(() => ProgressStatsType, { name: 'progress' })
     getProgress(): ProgressStats {
         const modules = this.dataService.findAll();
         return this.progressService.calculateProgress(modules);
