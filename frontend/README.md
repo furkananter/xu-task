@@ -1,59 +1,94 @@
-# Frontend
+# 🎓 Learning Platform Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+A modern, responsive web application built with **Angular**, **TypeScript**, and **Tailwind CSS**. This project features a unique **Glassmorphism** UI design, powered by **Spartan UI** primitives for accessibility and robust interactions.
 
-## Development server
+## ✨ Features
 
-To start a local development server, run:
+- **📚 Module Management**: View a list of available learning modules with details like category and duration.
+- **✅ Progress Tracking**: Mark modules as completed/incomplete with instant visual feedback and optimistic UI updates.
+- **📊 Real-time Statistics**: View completion percentage and module counts dynamically.
+- **🎨 Modern UI/UX**:
+  - **Glassmorphism Design**: Translucent cards, subtle gradients, and blur effects atop a deep, rich background.
+  - **Responsive Layout**: Optimized for various screen sizes using Tailwind's utility-first approach.
+  - **Interactive Elements**: Hover effects, smooth transitions, and accessible focus states.
+  - **Category Branding**: Unique color indicators for 'AI', 'Sustainability', and 'Digital Skills'.
+- **🔌 GraphQL Integration**: Efficient data fetching using **Apollo Angular**.
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Angular](https://angular.io/) (v21)
+- **Runtime**: [Bun](https://bun.sh/)
+- **Styling**:
+  - [Tailwind CSS](https://tailwindcss.com/) (Utility-first framework)
+  - Custom CSS Variables for Glassmorphism effects
+- **UI Component Primitives**: [Spartan UI](https://www.spartan.ng/) (brain)
+- **State Management**: Facade Pattern with Signals
+- **API Client**: Apollo Angular (GraphQL)
+- **Testing**: Vitest
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **[Bun](https://bun.sh/)** (Recommended) or Node.js v18+
+
+### Installation
+
+Navigate to the project root and install dependencies:
 
 ```bash
+bun install
+```
+
+### Running the Application
+
+Start the frontend development server:
+
+```bash
+cd frontend
+bun run start
+# or
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to `http://localhost:4200/`. The app requires the backend execution (GraphQL API) to function fully.
 
-## Code scaffolding
+## 🧪 Testing
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Run unit tests with Vitest:
 
 ```bash
-ng generate --help
+bun run test
 ```
 
-## Building
+## 📂 Project Structure
 
-To build the project run:
-
-```bash
-ng build
+```
+src/
+├── app/
+│   ├── components/         # Feature Components
+│   │   ├── module-list/    # Smart Container (integrates Facade)
+│   │   └── ui/             # Dumb/UI Components (Cards, Pills)
+│   ├── facades/            # State Management & Business Logic
+│   ├── graphql/            # GraphQL Queries & Mutations
+│   ├── services/           # Api Services
+│   └── ui/                 # Spartan UI primitives (headless)
+├── assets/                 # Static resources
+└── styles.css              # Global styles & Glassmorphism overrides
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🎨 Design System
 
-## Running unit tests
+The application combines Tailwind's utility classes with custom CSS for the glass effect:
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+- **Primary Colors**: Deep purples and blues (`bg-slate-900` variations).
+- **Glass Effect**: `backdrop-blur-xl` combined with `bg-white/10` and `border-white/20`.
+- **Status Indicators**:
+  - 🟢 **Success**: Green for completed items.
+  - 🟠 **Warmth**: Orange for 'Sustainability'.
+  - 🔵 **Tech**: Blue for 'AI'.
+  - 🟣 **Core**: Purple for 'Digital Skills'.
 
-```bash
-ng test
-```
+---
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+_Built as part of the Full-Stack Take-Home Assignment._
