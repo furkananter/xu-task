@@ -1,225 +1,112 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LearningModule, ModuleCategory } from '../../types/learning-module';
+import { HlmCardImports } from '@app/ui/card';
+import { HlmBadge } from '@app/ui/badge';
+import { HlmCheckbox } from '@app/ui/checkbox';
+import { HlmLabel } from '@app/ui/label';
 
 @Component({
-    selector: 'app-module-card',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
-    <div 
-      class="glass-card module-item" 
-      [class.completed]="module.completed"
-      [class.updating]="isUpdating">
+  selector: 'app-module-card',
+  standalone: true,
+  imports: [CommonModule, ...HlmCardImports, HlmBadge, HlmCheckbox, HlmLabel],
+  template: `
+    <section 
+      hlmCard 
+      class="relative h-[240px] flex flex-col transition-all duration-300 border border-[var(--glass-border)] hover:-translate-y-1 hover:border-[var(--primary)]/50 hover:bg-[var(--glass-highlight)] hover:shadow-[0_0_20px_rgba(var(--primary),0.2)] overflow-hidden"
+      [class.border-l-4]="true"
+      [style.border-left-color]="module.completed ? 'var(--accent-green)' : getCategoryColor(module.category)"
+      [class.opacity-70]="isUpdating"
+      [class.pointer-events-none]="isUpdating">
       
-      <div class="module-status-line"></div>
+      <!-- Subtle internal glow based on status -->
+      <div 
+        class="absolute inset-0 pointer-events-none transition-opacity duration-500"
+        [class]="module.completed ? 'bg-[var(--accent-green)]/5' : 'bg-transparent'">
+      </div>
       
-      <div class="module-main">
-        <div class="module-header">
-          <span class="category-tag" [attr.data-category]="module.category">
+      <div hlmCardHeader class="pb-2">
+        <div class="flex justify-between items-center">
+          <span 
+            hlmBadge 
+            variant="outline"
+            class="text-xs font-bold uppercase tracking-wide border"
+            [class]="getCategoryClass(module.category)">
             {{ getCategoryLabel(module.category) }}
           </span>
-          <span class="duration-tag">
+          <span class="text-sm text-muted-foreground bg-secondary/50 px-2 py-1 rounded-md">
             ⏱️ {{ module.estimatedMinutes }}m
           </span>
         </div>
-        
-        <h3>{{ module.title }}</h3>
-        
-        <div class="module-footer">
-          <label class="custom-checkbox">
-            <input 
-              type="checkbox" 
-              [checked]="module.completed"
-              [disabled]="isUpdating"
-              (change)="onToggle()">
-            <span class="checkmark"></span>
-            <span class="checkbox-text">
-              {{ module.completed ? 'Completed' : 'Mark Complete' }}
-            </span>
-          </label>
-        </div>
       </div>
       
-      <!-- Glossy overlay effect -->
-      <div class="shine"></div>
-    </div>
+      <div hlmCardContent class="flex-1">
+        <h3 
+          class="text-lg font-semibold leading-tight text-foreground"
+          [class.text-muted-foreground]="module.completed"
+          [class.line-through]="module.completed">
+          {{ module.title }}
+        </h3>
+      </div>
+      
+      <div hlmCardFooter>
+        <label class="flex items-center gap-3 cursor-pointer select-none group">
+          <hlm-checkbox 
+            [checked]="module.completed"
+            [disabled]="isUpdating"
+            (checkedChange)="onToggle()">
+          </hlm-checkbox>
+          <span 
+            hlmLabel
+            class="text-sm font-medium cursor-pointer transition-colors group-hover:text-primary"
+            [class.text-[var(--accent-green)]]="module.completed"
+            [class.group-hover:!text-[var(--accent-green)]]="module.completed">
+            {{ module.completed ? 'Completed' : 'Mark Complete' }}
+          </span>
+        </label>
+      </div>
+    </section>
   `,
-    styles: [`
-    .glass-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(var(--blur-md));
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 1.5rem;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  styles: [`
+    :host {
+      display: block;
       height: 100%;
     }
-
-    .module-item {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 180px;
-      cursor: default;
-    }
-
-    .module-item:hover {
-      transform: translateY(-5px) scale(1.02);
-      border-color: var(--glass-highlight);
-      box-shadow: var(--glass-shadow);
-      background: rgba(255,255,255,0.07);
-    }
-
-    .module-status-line {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--text-secondary), transparent);
-      opacity: 0.3;
-      transition: opacity 0.3s;
-    }
-
-    .module-item.completed .module-status-line {
-      background: var(--accent-green);
-      opacity: 1;
-      box-shadow: 0 0 10px var(--accent-green);
-    }
-    
-    .module-main {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    .module-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .category-tag {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.1);
-    }
-
-    .category-tag[data-category="AI"] { color: var(--accent-blue); background: rgba(56, 189, 248, 0.15); }
-    .category-tag[data-category="Sustainability"] { color: var(--accent-green); background: rgba(74, 222, 128, 0.15); }
-    .category-tag[data-category="DigitalSkills"] { color: var(--accent-purple); background: rgba(192, 132, 252, 0.15); }
-
-    .duration-tag {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    h3 {
-      font-size: 1.25rem;
-      line-height: 1.4;
-      margin-bottom: 2rem;
-      flex-grow: 1;
-      color: var(--text-primary);
-    }
-
-    .module-item.completed h3 {
-      color: var(--text-muted);
-      text-decoration: line-through;
-    }
-    
-    .module-item.updating {
-        opacity: 0.7;
-        pointer-events: none;
-    }
-
-    /* Custom Checkbox */
-    .custom-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .custom-checkbox input { display: none; }
-
-    .checkmark {
-      width: 24px;
-      height: 24px;
-      border: 2px solid var(--text-secondary);
-      border-radius: 6px;
-      position: relative;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .custom-checkbox:hover .checkmark { border-color: var(--text-primary); }
-
-    .custom-checkbox input:checked ~ .checkmark {
-      background: var(--accent-green);
-      border-color: var(--accent-green);
-      box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
-    }
-
-    .checkmark::after {
-      content: '';
-      position: absolute;
-      left: 7px;
-      top: 3px;
-      width: 6px;
-      height: 12px;
-      border: solid var(--bg-darker);
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg) scale(0);
-      transition: transform 0.2s;
-    }
-
-    .custom-checkbox input:checked ~ .checkmark::after { transform: rotate(45deg) scale(1); }
-
-    .checkbox-text {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      transition: color 0.2s;
-    }
-
-    .custom-checkbox input:checked ~ .checkbox-text {
-      color: var(--accent-green);
-    }
-
-    /* Shine Effect */
-    .shine {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
-      transform: translateX(-100%);
-      transition: 0.5s;
-      pointer-events: none;
-    }
-
-    .module-item:hover .shine { transform: translateX(100%); }
   `]
 })
 export class ModuleCardComponent {
-    @Input({ required: true }) module!: LearningModule;
-    @Input() isUpdating = false;
-    @Output() toggle = new EventEmitter<void>();
+  @Input({ required: true }) module!: LearningModule;
+  @Input() isUpdating = false;
+  @Output() toggle = new EventEmitter<void>();
 
-    onToggle(): void {
-        this.toggle.emit();
-    }
+  onToggle(): void {
+    this.toggle.emit();
+  }
 
-    getCategoryLabel(category: ModuleCategory): string {
-        const labels: Record<string, string> = {
-            'AI': 'Artificial Intelligence',
-            'Sustainability': 'Sustainability',
-            'DigitalSkills': 'Digital Skills'
-        };
-        return labels[category] || category;
-    }
+  getCategoryLabel(category: ModuleCategory): string {
+    const labels: Record<string, string> = {
+      'AI': 'Artificial Intelligence',
+      'Sustainability': 'Sustainability',
+      'DigitalSkills': 'Digital Skills'
+    };
+    return labels[category] || category;
+  }
+
+  getCategoryColor(category: ModuleCategory): string {
+    const colors: Record<string, string> = {
+      'AI': 'oklch(0.65 0.20 250)', // var(--accent-blue)
+      'Sustainability': 'oklch(0.75 0.18 60)', // var(--accent-orange)
+      'DigitalSkills': 'oklch(0.65 0.22 290)' // var(--accent-purple)
+    };
+    return colors[category] || 'var(--border)';
+  }
+
+  getCategoryClass(category: ModuleCategory): string {
+    const classes: Record<string, string> = {
+      'AI': 'border-[var(--accent-blue)] text-[var(--accent-blue)] bg-[var(--accent-blue)]/10',
+      'Sustainability': 'border-[var(--accent-orange)] text-[var(--accent-orange)] bg-[var(--accent-orange)]/10',
+      'DigitalSkills': 'border-[var(--accent-purple)] text-[var(--accent-purple)] bg-[var(--accent-purple)]/10'
+    };
+    return classes[category] || '';
+  }
 }

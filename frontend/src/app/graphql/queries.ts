@@ -32,8 +32,8 @@ export const GET_PROGRESS = gql`
  * GraphQL mutation to toggle module completion
  */
 export const TOGGLE_MODULE_COMPLETION = gql`
-  mutation ToggleModuleCompletion($id: String!, $completed: Boolean!) {
-    toggleModuleCompletion(id: $id, completed: $completed) {
+  mutation ToggleModuleCompletion($id: ID!, $completed: Boolean!) {
+    toggleModuleCompletion(input: { id: $id, completed: $completed }) {
       id
       title
       category

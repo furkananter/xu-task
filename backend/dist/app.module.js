@@ -10,7 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
 const apollo_1 = require("@nestjs/apollo");
-const learning_module_module_1 = require("./modules/learning-module.module");
+const learning_module_module_1 = require("./learning-module/learning-module.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;

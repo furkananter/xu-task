@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { LearningModuleModule } from './modules/learning-module.module';
+import { LearningModuleModule } from './learning-module/learning-module.module';
 
 @Module({
     imports: [

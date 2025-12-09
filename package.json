@@ -16,6 +16,7 @@
     "install:all": "cd backend && bun install && cd ../frontend && bun install"
   },
   "devDependencies": {
+    "@spartan-ng/cli": "^0.0.1-alpha.577",
     "concurrently": "^8.2.2"
   }
 }
